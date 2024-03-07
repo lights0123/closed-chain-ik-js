@@ -40,6 +40,7 @@ import {
 } from '../src/index.js';
 import {
 	loadATHLETE,
+	loadCrab,
 	loadRobonaut,
 	loadStaubli,
 	loadCuriosity,
@@ -582,13 +583,17 @@ function rebuildGUI() {
 	gui = new GUI();
 	gui.width = 350;
 
-	gui.add( params, 'model', [ 'ATHLETE', 'Robonaut', 'Curiosity', 'Staubli' ] ).onChange( value => {
+	gui.add( params, 'model', [ 'ATHLETE', 'crab', 'Robonaut', 'Curiosity', 'Staubli' ] ).onChange( value => {
 
 		let promise = null;
 		switch ( value ) {
 
 			case 'ATHLETE':
 				promise = loadATHLETE();
+				break;
+
+			case 'crab':
+				promise = loadCrab();
 				break;
 
 			case 'Robonaut':

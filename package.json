@@ -25,7 +25,7 @@
     "src/*"
   ],
   "scripts": {
-    "start": "concurrently \"cd example && parcel watch ./*.html --dist-dir ../local/ --public-url . --no-cache --no-hmr\" \"static-server\"",
+    "start": "concurrently \"cd example && parcel watch ./*.html --dist-dir ../local/ --public-url . --no-cache --no-hmr\" \"static-server local\"",
     "build": "cd example && parcel build ./*.html --dist-dir ../dist/ --public-url . --no-cache --no-content-hash",
     "lint": "eslint \"./src/**/*.js\" \"./test/**/*.js\" && tsc -p tsconfig.json --noEmit",
     "test": "cd test && jest"

@@ -275,6 +275,73 @@ export function loadATHLETE() {
 
 }
 
+export function loadCrab() {
+
+	return new Promise( ( resolve, reject ) => {
+
+		let ik, urdf, goalMap;
+		const manager = new LoadingManager();
+		manager.onLoad = () => {
+
+			resolve( { ik, urdf, goalMap } );
+
+		};
+
+		const url = '/crab/unnamed/urdf/unnamed.urdf';
+
+		const loader = new URDFLoader( manager );
+		loader.load( url, result => {
+
+			urdf = result;
+			ik = urdfRobotToIKRoot( urdf );
+
+			// update the robot joints
+			const DEG2RAD = Math.PI / 180;
+			urdf.rotation.set( - Math.PI / 2, 0, 0 );
+			for ( let i = 1; i <= 6; i ++ ) {
+
+				// urdf.joints[ `HP${ i }` ].setJointValue( 30 * DEG2RAD );
+				// urdf.joints[ `KP${ i }` ].setJointValue( 90 * DEG2RAD );
+				// urdf.joints[ `AP${ i }` ].setJointValue( - 30 * DEG2RAD );
+
+			}
+
+			// update the degrees of freedom of the joints
+			setIKFromUrdf( ik, urdf );
+
+			// store the rest pose
+			goalMap = new Map();
+			ik.traverse( c => {
+
+				console.log(c.name);
+				if ( c.isJoint ) {
+
+					c.dofRestPose.set( c.dofValues );
+					c.restPoseSet = true;
+
+				} else if ( /^base/.test( c.name ) ) {
+
+					const link = urdf.links[ c.name ];
+					const ee = new Joint();
+					ee.name = link.name;
+					ee.makeClosure( c );
+
+					c.getWorldPosition( ee.position );
+					c.getWorldQuaternion( ee.quaternion );
+					ee.setMatrixNeedsUpdate();
+
+					goalMap.set( ee, c );
+
+				}
+
+			} );
+
+		}, null, reject );
+
+	} );
+
+}
+
 export function loadRobonaut() {
 
 	return new Promise( ( resolve, reject ) => {
